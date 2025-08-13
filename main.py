@@ -13,7 +13,12 @@ app = FastAPI()
 
 @app.get("/")
 def root():
-    return {"message": "TDS Data Analyst Agent is running 🚀"}
+    return {
+        "status": "Agent is running 🚀",
+        "version": "1.0.0",
+        "last_deployed": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+    }
+from datetime import datetime
 
 
 # Helper function to create base64 plot
