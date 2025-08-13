@@ -18,15 +18,19 @@ def root():
 
 @app.post("/answer")
 async def answer(questions: UploadFile = File(...)):
-    # Read uploaded file
-    content = await questions.read()
-    
-    # Return dummy answers with file preview
+    question_text = (await questions.read()).decode("utf-8")
+
+    if "highest grossing films" in question_text.lower():
+        answers = await handle_wikipedia_question(question_text)
+    else:
+        answers = ["Unsupported question"]
+
     return {
         "questions_file": questions.filename,
-        "content_preview": content.decode(errors="ignore")[:100],
-        "answers": []
+        "content_preview": question_text[:100],
+        "answers": answers
     }
+
 
 
 # Helper function to create base64 plot
