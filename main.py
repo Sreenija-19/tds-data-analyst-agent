@@ -11,6 +11,11 @@ from io import BytesIO
 
 app = FastAPI()
 
+@app.get("/")
+def root():
+    return {"message": "TDS Data Analyst Agent is running 🚀"}
+
+
 # Helper function to create base64 plot
 def make_base64_plot(x, y):
     import matplotlib.pyplot as plt
