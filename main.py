@@ -11,7 +11,6 @@ from io import BytesIO
 
 app = FastAPI()
 
-
 @app.get("/")
 def root():
     return {"message": "API is live"}
@@ -31,15 +30,7 @@ async def answer(questions: UploadFile = File(...)):
         "answers": answers
     }
 
-
-
-# Helper function to create base64 plot
 def make_base64_plot(x, y):
-    import matplotlib.pyplot as plt
-    import io
-    import base64
-    import numpy as np
-
     fig, ax = plt.subplots()
     ax.scatter(x, y)
 
@@ -51,7 +42,7 @@ def make_base64_plot(x, y):
     ax.set_ylabel("Peak Gross ($B)")
     ax.set_title("Rank vs Peak Gross")
 
-    buf = io.BytesIO()
+    buf = BytesIO()
     plt.savefig(buf, format="png", bbox_inches="tight", dpi=150)
     buf.seek(0)
     encoded = base64.b64encode(buf.read()).decode("utf-8")
@@ -93,8 +84,11 @@ async def handle_wikipedia_question(question_text: str):
     )
     df["Rank"] = pd.to_numeric(df["Rank"], errors="coerce")
     df["Year"] = pd.to_numeric(df["Title"].str.extract(r"\((\d{4})\)")[0])
+
+    # Analysis
     movies_2bn_pre2000 = df[(df["Peak Gross ($B)"] >= 2.0) & (df["Year"] < 2000)].shape[0]
     earliest_1_5bn = df[df["Peak Gross ($B)"] > 1.5].sort_values("Year").iloc[0]["Title"]
     correlation = df[["Rank", "Peak Gross ($B)"]].dropna().corr().iloc[0, 1]
     plot_uri = make_base64_plot(df["Rank"], df["Peak Gross ($B)"])
+
     return [movies_2bn_pre2000, earliest_1_5bn, round(correlation, 6), plot_uri]
