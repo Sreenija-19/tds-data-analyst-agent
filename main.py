@@ -11,14 +11,22 @@ from io import BytesIO
 
 app = FastAPI()
 
+
 @app.get("/")
 def root():
+    return {"message": "API is live"}
+
+@app.post("/answer")
+async def answer(questions: UploadFile = File(...)):
+    # Read uploaded file
+    content = await questions.read()
+    
+    # Return dummy answers with file preview
     return {
-        "status": "Agent is running 🚀",
-        "version": "1.0.0",
-        "last_deployed": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+        "questions_file": questions.filename,
+        "content_preview": content.decode(errors="ignore")[:100],
+        "answers": []
     }
-from datetime import datetime
 
 
 # Helper function to create base64 plot
