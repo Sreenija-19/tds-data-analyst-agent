@@ -10,6 +10,14 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 
 app = FastAPI()
+@app.post("/")
+async def analyze(files: List[UploadFile] = File(...)):
+    results = []
+    for file in files:
+        content = await file.read()
+        # Do your analysis here, e.g., parse questions.txt
+        results.append(f"Received {file.filename} ({len(content)} bytes)")
+    return {"results": results}
 
 @app.get("/")
 def root():
